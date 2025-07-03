@@ -142,7 +142,7 @@ export const App = () => {
         <div className="App__player">
           <div className="App__player--iconBlock">
             <img
-              src="/images/player.svg"
+              src="/rock-scissors-paper/images/player.svg"
               className="App__player--icon"
               alt="player icon"
             />
