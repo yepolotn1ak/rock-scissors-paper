@@ -153,7 +153,7 @@ export const App = () => {
           <div className="App__player--pointsBlock">
             {playerData.points.list.map((name) => (
               <img
-                src={`/images/point-${name}.svg`}
+                src={`/rock-scissors-paper/images/point-${name}.svg`}
                 className="App__player--point"
               />
             ))}
@@ -164,7 +164,7 @@ export const App = () => {
           <div className="App__choices">
             {[playerData, computerData].map(({ name, choice }) => (
               <img
-                src={`/images/${choice}.svg`}
+                src={`/rock-scissors-paper/images/${choice}.svg`}
                 className={`App__choices--${name} ${
                   isAnimating && `App__choices--${name}-animate`
                 }`}
@@ -196,7 +196,7 @@ export const App = () => {
                     disabled={isAnimating}
                   >
                     <img
-                      src={`/images/${choice}.svg`}
+                      src={`/rock-scissors-paper/images/${choice}.svg`}
                       className="App__buttons--image"
                     />
                   </button>
@@ -218,7 +218,7 @@ export const App = () => {
         <div className="App__player">
           <div className="App__player--iconBlock">
             <img
-              src="/images/computer.svg"
+              src="/rock-scissors-paper/images/computer.svg"
               className="App__player--icon"
               alt="player icon"
             />
@@ -229,7 +229,7 @@ export const App = () => {
           <div className="App__player--pointsBlock">
             {computerData.points.list.map((name) => (
               <img
-                src={`/images/point-${name}.svg`}
+                src={`/rock-scissors-paper/images/point-${name}.svg`}
                 className="App__player--point"
               />
             ))}
