@@ -1,7 +1,23 @@
 import { useEffect, useState } from "react";
 import "./App.scss";
 
+import player from "./images/player.svg";
+import computer from "./images/computer.svg";
+import rock from "./images/rock.svg";
+import scissors from "./images/scissors.svg";
+import paper from "./images/paper.svg";
+import point_none from "./images/point-none.svg";
+import point_active from "./images/point-active.svg";
+
 const choices = ["rock", "scissors", "paper"];
+
+const imagesMap = {
+  rock,
+  scissors,
+  paper,
+  "point-none": point_none,
+  "point-active": point_active,
+};
 
 const initialPoints = {
   count: 0,
@@ -42,6 +58,8 @@ const getWinnerForRound = (choicesCombination) => {
   if (computerWinComb.includes(preparedChoices)) {
     return "computer";
   }
+
+  return "none";
 };
 
 const updatePlayerData = (currentData) => ({
@@ -61,9 +79,11 @@ export const App = () => {
   );
   const [roundData, setRoundData] = useState(initialRoundsData);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameFinished, setGameFinished] = useState(false);
 
   const handlePlayerChoice = (choice) => {
+    setGameStarted(true);
     setIsAnimating(true);
 
     setTimeout(() => {
@@ -80,16 +100,15 @@ export const App = () => {
     }));
   };
 
-  useEffect(() => {
-    if (playerData.choice === computerData.choice) {
-      setRoundData((currentData) => ({
-        ...currentData,
-        count: currentData.count + 1,
-        message: gameMessages.draw,
-      }));
-      return;
-    }
+  const updateRoundData = (message) => {
+    setRoundData((currentData) => ({
+      ...currentData,
+      count: currentData.count + 1,
+      message,
+    }));
+  };
 
+  useEffect(() => {
     const roundWinner = getWinnerForRound([
       playerData.choice,
       computerData.choice,
@@ -97,28 +116,18 @@ export const App = () => {
 
     if (roundWinner === "player") {
       setPlayerData(updatePlayerData);
-      setRoundData((currentData) => ({
-        ...currentData,
-        count: currentData.count + 1,
-        message: gameMessages.playerPoint,
-      }));
-      return;
-    }
-
-    if (roundWinner === "computer") {
+      updateRoundData(gameMessages.playerPoint);
+    } else if (roundWinner === "computer") {
       setComputerData(updatePlayerData);
-      setRoundData((currentData) => ({
-        ...currentData,
-        count: currentData.count + 1,
-        message: gameMessages.computerPoint,
-      }));
-      return;
+      updateRoundData(gameMessages.computerPoint);
+    } else if (roundWinner === "none" && gameStarted) {
+      updateRoundData(gameMessages.draw);
     }
   }, [computerData.choice, playerData.choice]);
 
   useEffect(() => {
     if (playerData.points.count === 5) {
-      setGameOver(true);
+      setGameFinished(true);
       setRoundData((currentData) => ({
         ...currentData,
         finalReuslt: gameMessages.playerWin,
@@ -126,7 +135,7 @@ export const App = () => {
     }
 
     if (computerData.points.count === 5) {
-      setGameOver(true);
+      setGameFinished(true);
       setRoundData((currentData) => ({
         ...currentData,
         finalReuslt: gameMessages.computerWin,
@@ -141,11 +150,7 @@ export const App = () => {
       <div className="App__players">
         <div className="App__player">
           <div className="App__player--iconBlock">
-            <img
-              src="/rock-scissors-paper/images/player.svg"
-              className="App__player--icon"
-              alt="player icon"
-            />
+            <img src={player} className="App__player--icon" />
           </div>
 
           <h2 className="App__player--name">Гравець</h2>
@@ -153,7 +158,8 @@ export const App = () => {
           <div className="App__player--pointsBlock">
             {playerData.points.list.map((name) => (
               <img
-                src={`/rock-scissors-paper/images/point-${name}.svg`}
+                key={Math.random()}
+                src={imagesMap[`point-${name}`]}
                 className="App__player--point"
               />
             ))}
@@ -164,7 +170,8 @@ export const App = () => {
           <div className="App__choices">
             {[playerData, computerData].map(({ name, choice }) => (
               <img
-                src={`/rock-scissors-paper/images/${choice}.svg`}
+                key={name}
+                src={imagesMap[choice]}
                 className={`App__choices--${name} ${
                   isAnimating && `App__choices--${name}-animate`
                 }`}
@@ -187,16 +194,17 @@ export const App = () => {
           </div>
 
           <div className="App__bottom">
-            {!gameOver && (
+            {!gameFinished && (
               <div className="App__buttons">
                 {choices.map((choice) => (
                   <button
+                    key={choice}
                     className="App__buttons--button"
                     onClick={() => handlePlayerChoice(choice)}
                     disabled={isAnimating}
                   >
                     <img
-                      src={`/rock-scissors-paper/images/${choice}.svg`}
+                      src={imagesMap[choice]}
                       className="App__buttons--image"
                     />
                   </button>
@@ -204,7 +212,7 @@ export const App = () => {
               </div>
             )}
 
-            {gameOver && (
+            {gameFinished && (
               <button
                 className="App__restartButton"
                 onClick={() => window.location.reload()}
@@ -217,11 +225,7 @@ export const App = () => {
 
         <div className="App__player">
           <div className="App__player--iconBlock">
-            <img
-              src="/rock-scissors-paper/images/computer.svg"
-              className="App__player--icon"
-              alt="player icon"
-            />
+            <img src={computer} className="App__player--icon" />
           </div>
 
           <h2 className="App__player--name">Комп`ютер</h2>
@@ -229,7 +233,8 @@ export const App = () => {
           <div className="App__player--pointsBlock">
             {computerData.points.list.map((name) => (
               <img
-                src={`/rock-scissors-paper/images/point-${name}.svg`}
+                key={Math.random()}
+                src={imagesMap[`point-${name}`]}
                 className="App__player--point"
               />
             ))}
