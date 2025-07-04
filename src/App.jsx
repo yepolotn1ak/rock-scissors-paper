@@ -46,20 +46,16 @@ const getDataForPlayer = (name) => ({
   choice: choices[0],
 });
 
-const getWinnerForRound = (choicesCombination) => {
-  const preparedChoices = choicesCombination.join("-");
-  const playerWinComb = ["rock-scissors", "scissors-paper", "paper-rock"];
-  const computerWinComb = ["scissors-rock", "paper-scissors", "rock-paper"];
+const getWinnerForRound = ([playerChoice, computerChoice]) => {
+  if (playerChoice === computerChoice) return "none";
 
-  if (playerWinComb.includes(preparedChoices)) {
-    return "player";
-  }
+  const winComb = {
+    rock: "scissors",
+    scissors: "paper",
+    paper: "rock",
+  };
 
-  if (computerWinComb.includes(preparedChoices)) {
-    return "computer";
-  }
-
-  return "none";
+  return winComb[playerChoice] === computerChoice ? "player" : "computer";
 };
 
 const updatePlayerData = (currentData) => ({
@@ -82,24 +78,6 @@ export const App = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
 
-  const handlePlayerChoice = (choice) => {
-    setGameStarted(true);
-    setIsAnimating(true);
-
-    setTimeout(() => {
-      setPlayerData((currentData) => ({ ...currentData, choice }));
-      handleComputerChoice();
-      setIsAnimating(false);
-    }, 2000);
-  };
-
-  const handleComputerChoice = () => {
-    setComputerData((currentData) => ({
-      ...currentData,
-      choice: choices[Math.floor(Math.random() * choices.length)],
-    }));
-  };
-
   const updateRoundData = (message) => {
     setRoundData((currentData) => ({
       ...currentData,
@@ -108,11 +86,17 @@ export const App = () => {
     }));
   };
 
-  useEffect(() => {
-    const roundWinner = getWinnerForRound([
-      playerData.choice,
-      computerData.choice,
-    ]);
+  const handlePlayerChoice = (choice) => {
+  if (!gameStarted) setGameStarted(true);
+  setIsAnimating(true);
+
+  setTimeout(() => {
+    const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+
+    setPlayerData((currentData) => ({ ...currentData, choice }));
+    setComputerData((currentData) => ({ ...currentData, choice: computerChoice }));
+
+    const roundWinner = getWinnerForRound([choice, computerChoice]);
 
     if (roundWinner === "player") {
       setPlayerData(updatePlayerData);
@@ -120,10 +104,13 @@ export const App = () => {
     } else if (roundWinner === "computer") {
       setComputerData(updatePlayerData);
       updateRoundData(gameMessages.computerPoint);
-    } else if (roundWinner === "none" && gameStarted) {
+    } else {
       updateRoundData(gameMessages.draw);
     }
-  }, [computerData.choice, playerData.choice]);
+
+    setIsAnimating(false);
+  }, 2000);
+};
 
   useEffect(() => {
     if (playerData.points.count === 5) {
