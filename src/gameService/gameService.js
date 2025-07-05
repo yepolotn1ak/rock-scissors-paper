@@ -4,6 +4,7 @@ export const gameService = {
   getDataFor: (name, choices) => ({
     name,
     points: 0,
+    isWin: false,
     choice: choices[0],
   }),
   getInitialRoundData: () => ({

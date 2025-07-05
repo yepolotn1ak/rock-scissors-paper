@@ -1,5 +1,5 @@
 import "./App.scss";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayerBlock } from "./components/PlayerBlock/PlayerBlock";
 import { RoundChoices } from "./components/RoundChoices/RoundChoices";
 import { Messages } from "./components/Messages/Messages";
@@ -72,8 +72,9 @@ export const App = () => {
     }, 2000);
   };
 
-  const getGameWinner = useCallback(() => {
+  useEffect(() => {
     if (playerData.points === pointsToWin) {
+      setPlayerData(currentData => ({ ...currentData, isWin: true }))
       setGameFinished(true);
       setRoundData((currentData) => ({
         ...currentData,
@@ -82,6 +83,7 @@ export const App = () => {
     }
 
     if (computerData.points === pointsToWin) {
+      setComputerData(currentData => ({ ...currentData, isWin: true }))
       setGameFinished(true);
       setRoundData((currentData) => ({
         ...currentData,
@@ -90,14 +92,12 @@ export const App = () => {
     }
   }, [computerData.points, playerData.points]);
 
-  useEffect(getGameWinner);
-
   return (
     <div className="App">
       <h1 className="App__title">Камінь Ножиці Папір</h1>
 
       <div className="App__game">
-        <PlayerBlock playerInfo={playerData} />
+        <PlayerBlock playerInfo={playerData} gameFinished={gameFinished} />
 
         <div className="App__choiceBlock">
           <RoundChoices
@@ -115,7 +115,7 @@ export const App = () => {
           />
         </div>
 
-        <PlayerBlock playerInfo={computerData} />
+        <PlayerBlock playerInfo={computerData} gameFinished={gameFinished}/>
       </div>
     </div>
   );

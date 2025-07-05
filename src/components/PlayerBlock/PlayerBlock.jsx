@@ -1,12 +1,17 @@
 import "./PlayerBlock.scss";
 import { images } from "../../imagesService/imagesService";
+import { pointsToWin } from "../../constans/constans";
 
-export const PlayerBlock = ({ playerInfo }) => {
-  const { name, points } = playerInfo;
+export const PlayerBlock = ({ playerInfo, gameFinished }) => {
+  const { name, points, isWin } = playerInfo;
   const playerNameTitle = name === "player" ? "Гравець" : "Комп’ютер";
 
   return (
-    <div className="player">
+    <div
+      className={`player ${
+        gameFinished && (isWin ? "player--win" : "player--lose")
+      }`}
+    >
       <div className="player__iconBlock">
         <img src={images[name]} className="player__icon" alt={name} />
       </div>
@@ -14,7 +19,7 @@ export const PlayerBlock = ({ playerInfo }) => {
       <h2 className="player__name">{playerNameTitle}</h2>
 
       <div className="player__pointsBlock">
-        {Array.from({ length: 5 })
+        {Array.from({ length: pointsToWin })
           .map((_, index) => (
             <img
               key={index}

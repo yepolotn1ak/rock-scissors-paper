@@ -7,6 +7,19 @@
   padding: 30px;
   background-color: rgb(119, 165, 234);
   border-radius: 40px;
+  box-shadow: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+
+  &--win {
+    box-shadow: 0 0 8px 4px rgba(0, 255, 0, 0.6),
+      0 0 20px 10px rgba(0, 255, 0, 0.35), 0 0 35px 20px rgba(0, 255, 0, 0.2);
+  }
+
+  &--lose {
+    box-shadow: 0 0 8px 4px rgba(255, 0, 0, 0.6),
+      0 0 20px 10px rgba(255, 0, 0, 0.35), 0 0 35px 20px rgba(255, 0, 0, 0.2);
+  }
 
   &__name {
     margin-block: 20px;
